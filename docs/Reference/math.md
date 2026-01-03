@@ -120,6 +120,14 @@ math.atan(num:Number) -> Number
 
 Return the arc tangent value of the argument [num] which is an angle expressed in radians.
 
+### atan2
+
+```ruby
+math.atan2(y:Number, x:Number) -> Number
+```
+
+These functions calculate the principal value of the arc tangent of y / x, using the signs of the two arguments to determine the quadrant of the result
+
 ### log10
 
 ```ruby

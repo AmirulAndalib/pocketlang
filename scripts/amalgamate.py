@@ -11,6 +11,13 @@
 import os, re, sys
 from os.path import *
 
+## Print error message in red and exit
+RED = '\033[91m'
+RESET = '\033[0m'
+print(f"{RED}ERROR: The amalgamate script is deprecated and will not work properly.{RESET}", file=sys.stderr)
+print(f"{RED}       Please use 'make' to build the project instead.{RESET}", file=sys.stderr)
+sys.exit(1)
+
 ## Pocket lang root directory. All the listed paths bellow are relative to
 ## the root path.
 ROOT_PATH = abspath(join(dirname(__file__), ".."))
@@ -80,17 +87,33 @@ def parse(path):
   ##    const char* s = "//";\n
   ##
   ## The above '//' considered as comment but it's inside a string.
-  text = re.sub('/\*.*?\*/', '', text, flags=re.S)
-  text = re.sub('//.*?\n', '\n', text, flags=re.S)
-  text = re.sub('[^\n\S]*\n', '\n', text, flags=re.S)
-  text = re.sub('\n\n+', '\n\n', text, flags=re.S)
+  text = re.sub(r'/\*.*?\*/', '', text, flags=re.S)
+  text = re.sub(r'//.*?\n', '\n', text, flags=re.S)
+  text = re.sub(r'[^\n\S]*\n', '\n', text, flags=re.S)
+  text = re.sub(r'\n\n+', '\n\n', text, flags=re.S)
   return text
 
 def generate():
 
-  gen = ''
+  gen = '''/*
+ * This is an amalgamated single-file header of PocketLang.
+ * 
+ * USAGE:
+ * 
+ *   In most source files, just include this header normally:
+ *     #include <pocketlang.h>
+ * 
+ *   In exactly ONE source file, define PK_IMPLEMENT before including:
+ *     #define PK_IMPLEMENT
+ *     #include <pocketlang.h>
+ * 
+ *   This will include the implementation. All other files should include
+ *   the header without defining PK_IMPLEMENT.
+ */
+
+'''
   with open(PUBLIC_HEADER, 'r') as fp:
-    gen = fp.read()
+    gen += fp.read()
 
   gen += '\n#define PK_AMALGAMATED\n'
   for header in HEADERS:
